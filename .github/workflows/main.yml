@@ -5,13 +5,9 @@ on:
     inputs:
       app_url:
         description: "URL to the official TickTick DMG"
-        default: "https://download.ticktick.app/download/mac/TickTick_8.0.60_468.dmg"
+        default: "https://ticktick.app"
         required: true
         type: string
-
-# Forces the runner to execute actions using the Node 24 runtime environment
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -26,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run Patch Script
         run: |
@@ -38,7 +34,7 @@ jobs:
           hdiutil create -volname "TickTick (Patched)" -srcfolder build/TickTick.patched.app -ov -format UDZO build/TickTick.patched.dmg
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: Patched TickTick (${{ github.run_number }})
           files: build/TickTick.patched.dmg
@@ -46,4 +42,4 @@ jobs:
 
       - name: Output Release URL
         run: |
-          echo "::notice::Release available at: https://github.com/${{ github.repository }}/releases"
+          echo "::notice::Release available at: https://github.com{{ github.repository }}/releases"
